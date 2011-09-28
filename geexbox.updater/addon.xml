@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="geexbox.updater"
+       name="GeeXboX Updater"
+       version="0.0.1"
+       provider-name="Team GeeXboX">
+  <requires>
+    <import addon="xbmc.python" version="1.0"/>
+  </requires>
+  <extension point="xbmc.python.script"
+             library="default.py" />
+  <extension point="xbmc.addon.metadata">
+    <platform>linux</platform>
+    <summary lang="en">Used to upgrade/customize distribution.</summary>
+    <description lang="en">Used to upgrade/customize distribution.</description>
+  </extension>
+</addon>
