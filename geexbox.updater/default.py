@@ -57,22 +57,22 @@ ACTION_PREVIOUS_MENU = 10
 
 class MyClass(xbmcgui.WindowDialog):
   def __init__(self):
-    imagelogo = os.path.abspath(os.curdir + '/logo1.png')
+    imagelogo = os.path.abspath(os.curdir + '/background.png')
     screenx = self.getWidth()
     screeny = self.getHeight()
-    self.addControl(xbmcgui.ControlImage(0,0,screenx,screeny, imagelogo))
-    self.strActionInfo = xbmcgui.ControlLabel(300, 50, 200, 200, '', 'font16', '0xFFFF00FF')
+    self.addControl(xbmcgui.ControlImage(50,50,screenx-100,screeny-100, imagelogo))
+    self.strActionInfo = xbmcgui.ControlLabel(300, 50, 500, 200, '', 'font24_title', '0xFFFF000F')
     self.addControl(self.strActionInfo)
     self.strActionInfo.setLabel('GeeXboX packages')
-    self.button0 = xbmcgui.ControlButton(250, 100, 250, 30, "Upgrade packages ...")
+
+    self.button0 = xbmcgui.ControlButton(120, 120, 250, 30, "Upgrade packages ...")
     self.addControl(self.button0)
-    self.button1 = xbmcgui.ControlButton(250, 200, 250, 30, "Add a package ...")
+    self.button1 = xbmcgui.ControlButton(120, 220, 250, 30, "Add a package ...")
     self.addControl(self.button1)
-    self.button2 = xbmcgui.ControlButton(250, 300, 250, 30, "Remove a package ...")
+    self.button2 = xbmcgui.ControlButton(120, 320, 250, 30, "Remove a package ...")
     self.addControl(self.button2)
-    self.button3 = xbmcgui.ControlButton(250, 400, 250, 30, "Exit")
+    self.button3 = xbmcgui.ControlButton(120, 420, 250, 30, "Exit")
     self.addControl(self.button3)
-#    self.addControl(xbmcgui.ControlImage(10,550,267,600, 'logo2.png',aspectRatio=1))
     self.setFocus(self.button0)
     self.button0.controlDown(self.button1)
     self.button1.controlDown(self.button2)
@@ -129,7 +129,7 @@ class MyClass(xbmcgui.WindowDialog):
 
 class ChildClass(xbmcgui.WindowDialog):
   def __init__(self):
-    imagelogo = os.path.abspath(os.curdir + '/logo1.png')
+    imagelogo = os.path.abspath(os.curdir + '/background.png')
     screenx = self.getWidth()
     screeny = self.getHeight()
     self.addControl(xbmcgui.ControlImage(0,0,screenx,screeny, imagelogo))
@@ -186,7 +186,7 @@ class ChildClass(xbmcgui.WindowDialog):
 
 class ChildClass2(xbmcgui.WindowDialog):
   def __init__(self):
-    imagelogo = os.path.abspath(os.curdir + '/logo1.png')
+    imagelogo = os.path.abspath(os.curdir + '/background.png')
     screenx = self.getWidth()
     screeny = self.getHeight()
     self.addControl(xbmcgui.ControlImage(0,0,screenx,screeny, imagelogo))
