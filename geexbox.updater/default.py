@@ -55,7 +55,7 @@ import xbmc, xbmcgui
 #get actioncodes from keymap.xml
 ACTION_PREVIOUS_MENU = 10
 
-class MyClass(xbmcgui.Window):
+class MyClass(xbmcgui.WindowDialog):
   def __init__(self):
     imagelogo = os.path.abspath(os.curdir + '/logo1.png')
     screenx = self.getWidth()
@@ -127,7 +127,7 @@ class MyClass(xbmcgui.Window):
     dialog = xbmcgui.Dialog()
     dialog.ok(" Info ", message)
 
-class ChildClass(xbmcgui.Window):
+class ChildClass(xbmcgui.WindowDialog):
   def __init__(self):
     imagelogo = os.path.abspath(os.curdir + '/logo1.png')
     screenx = self.getWidth()
@@ -184,7 +184,7 @@ class ChildClass(xbmcgui.Window):
     dialog = xbmcgui.Dialog()
     dialog.ok(" My message title", message)
 
-class ChildClass2(xbmcgui.Window):
+class ChildClass2(xbmcgui.WindowDialog):
   def __init__(self):
     imagelogo = os.path.abspath(os.curdir + '/logo1.png')
     screenx = self.getWidth()
