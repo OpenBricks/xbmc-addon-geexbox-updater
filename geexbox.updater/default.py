@@ -77,13 +77,22 @@ class MyClass(xbmcgui.WindowDialog):
     self.addControl(self.button3)
     self.strActionRemove = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to remove', 'font18', '0xFFBBFFBB')
     self.addControl(self.strActionRemove)
+    self.strActionAdd = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to add ...', 'font18', '0xFFBBFFBB')
+    self.addControl(self.strActionAdd)
     self.list = xbmcgui.ControlList(380, 150, 300, 400,buttonTexture=itemFocus)
     self.addControl(self.list)
+    self.listA = xbmcgui.ControlList(380, 150, 300, 400,buttonTexture=itemFocus)
+    self.addControl(self.listA)
     self.buttonexitR = xbmcgui.ControlButton(380, 600, 250, 30, "Exit")
     self.addControl(self.buttonexitR)
+    self.buttonexitA = xbmcgui.ControlButton(380, 600, 250, 30, "Exit")
+    self.addControl(self.buttonexitA)
     self.strActionRemove.setVisible(False)
     self.buttonexitR.setVisible(False)
     self.list.setVisible(False)
+    self.listA.setVisible(False)
+    self.strActionAdd.setVisible(False)
+    self.buttonexitA.setVisible(False)
 
     self.basicbutton()
 
@@ -101,6 +110,24 @@ class MyClass(xbmcgui.WindowDialog):
     self.list.controlRight(self.buttonexitR)
     self.list.controlLeft(self.buttonexitR)
     self.setFocus(self.list)
+    self.button0.setVisible(False)
+    self.button1.setVisible(False)
+    self.button2.setVisible(False)
+    self.button3.setVisible(False)
+
+  def ActivatebuttonsA(self):
+    l = self.execcmd("find /root/opkg/ -name *.opk")
+    for x in range(len(l)):
+      l[x] = l[x].strip()
+      self.listA.addItem(l[x])
+    self.strActionAdd.setVisible(True)
+    self.buttonexitA.setVisible(True)
+    self.listA.setVisible(True)
+    self.buttonexitA.controlRight(self.listA)
+    self.buttonexitA.controlLeft(self.listA)
+    self.listA.controlRight(self.buttonexitA)
+    self.listA.controlLeft(self.buttonexitA)
+    self.setFocus(self.listA)
     self.button0.setVisible(False)
     self.button1.setVisible(False)
     self.button2.setVisible(False)
@@ -145,12 +172,11 @@ class MyClass(xbmcgui.WindowDialog):
       self.execcmd("opkg update")
       tm = self.execcmd("opkg upgrade")
       self.message("".join(tm))
+
     if control == self.button1:
       tm = self.execcmd("find /root/opkg/ -name *.opk")
       if not tm == 'error' :
-        popup = ChildClass2()
-        popup .doModal()
-        del popup
+        self.ActivatebuttonsA()
       else:
         self.message("No package in /root/opkg ! Can't continue ..." )
 
@@ -173,72 +199,36 @@ class MyClass(xbmcgui.WindowDialog):
         self.list.reset()
         self.basicbutton()
 
-    if control == self.buttonexitR:
-      self.strActionRemove.setVisible(False)
-      self.buttonexitR.setVisible(False)
-      self.list.setVisible(False)
-      self.basicbutton()
-
-    if control == self.button2:
-      self.ActivatebuttonsR()
-      
-    if control == self.button3:
-      self.close()
-
-  def message(self, message):
-    dialog = xbmcgui.Dialog()
-    dialog.ok(" Info ", message)
-
-
-class ChildClass2(xbmcgui.WindowDialog):
-  def __init__(self):
-    imagelogo = os.path.abspath(os.curdir + '/background.png')
-    screenx = self.getWidth()
-    screeny = self.getHeight()
-    self.addControl(xbmcgui.ControlImage(0,0,screenx,screeny, imagelogo))
-    self.strActionInfo = xbmcgui.ControlLabel(300, 50, 400, 250, '', 'font18', '0xFFBBFFBB')
-    self.addControl(self.strActionInfo)
-    self.strActionInfo.setLabel('Select Package to add ...')
-    tm = self.execcmd("find /root/opkg/ -name *.opk")
-    self.list = xbmcgui.ControlList(200, 150, 300, 400)
-    self.addControl(self.list)
-    for x in range(len(tm)):
-      tm[x] = tm[x].strip()
-      self.list.addItem(tm[x])
-    self.setFocus(self.list)
-    self.buttonexit = xbmcgui.ControlButton(250, 600, 250, 30, "Exit")
-    self.addControl(self.buttonexit)
-    self.buttonexit.controlRight(self.list)
-    self.buttonexit.controlLeft(self.list)
-    self.list.controlRight(self.buttonexit)
-    self.list.controlLeft(self.buttonexit)
-
-  def execcmd(self, cmd):
-    (child_stdin, child_stdout, child_stderr) = os.popen3(cmd)
-    stderr = child_stderr.readlines()
-    stdout = child_stdout.readlines()
-    child_stdin.close()
-    child_stdout.close()
-    child_stderr.close()
-    if stderr ==[]:
-      print " Cmd Ok result is %s" % stdout
-      print len(stdout)
-      return stdout
-    else:
-      print "Error: %s" % stderr
-      return 'error'
-
-  def onControl(self, control):
-    if control == self.list:
-      item = self.list.getSelectedItem()
+    if control == self.listA:
+      item = self.listA.getSelectedItem()
       dialog = xbmcgui.Dialog()
       if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
         pkg = item.getLabel()
         tm = self.execcmd('opkg install ' + pkg )
         print tm
         self.message('You installed : ' + pkg )
-        self.close()
-    if control == self.buttonexit:
+        self.strActionAdd.setVisible(False)
+        self.buttonexitA.setVisible(False)
+        self.listA.setVisible(False)
+        self.listA.reset()
+        self.basicbutton()
+
+    if control == self.buttonexitR:
+      self.strActionRemove.setVisible(False)
+      self.buttonexitR.setVisible(False)
+      self.list.setVisible(False)
+      self.basicbutton()
+
+    if control == self.buttonexitA:
+      self.strActionAdd.setVisible(False)
+      self.buttonexitA.setVisible(False)
+      self.listA.setVisible(False)
+      self.basicbutton()
+
+    if control == self.button2:
+      self.ActivatebuttonsR()
+      
+    if control == self.button3:
       self.close()
 
   def message(self, message):
