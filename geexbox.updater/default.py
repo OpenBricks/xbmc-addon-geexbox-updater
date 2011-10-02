@@ -57,6 +57,10 @@ ACTION_PREVIOUS_MENU = 10
 ACTION_SELECT_ITEM = 7
 
 class MyClass(xbmcgui.WindowDialog):
+
+  global optionsAdd
+  optionsAdd = ''
+
   def __init__(self):
     imagelogo = os.path.abspath(os.curdir + '/background.png')
     itemFocus = os.path.abspath(os.curdir + '/focus.png')
@@ -75,6 +79,10 @@ class MyClass(xbmcgui.WindowDialog):
     self.addControl(self.button2)
     self.button3 = xbmcgui.ControlButton(120, 420, 250, 30, "Exit")
     self.addControl(self.button3)
+    self.button4 = xbmcgui.ControlButton(160, 200, 100, 30, "Options")
+    self.addControl(self.button4)
+    self.stropt1 = xbmcgui.ControlLabel(160, 170, 300, 250, 'Options for opkg', 'font10', '0xFFBBFFBB')
+    self.addControl(self.stropt1)
     self.strActionRemove = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to remove', 'font18', '0xFFBBFFBB')
     self.addControl(self.strActionRemove)
     self.strActionAdd = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to add ...', 'font18', '0xFFBBFFBB')
@@ -93,6 +101,8 @@ class MyClass(xbmcgui.WindowDialog):
     self.listA.setVisible(False)
     self.strActionAdd.setVisible(False)
     self.buttonexitA.setVisible(False)
+    self.button4.setVisible(False)
+    self.stropt1.setVisible(False)
 
     self.basicbutton()
 
@@ -123,8 +133,16 @@ class MyClass(xbmcgui.WindowDialog):
     self.strActionAdd.setVisible(True)
     self.buttonexitA.setVisible(True)
     self.listA.setVisible(True)
+    self.button4.setVisible(True)
+    self.stropt1.setVisible(True)
     self.buttonexitA.controlRight(self.listA)
     self.buttonexitA.controlLeft(self.listA)
+    self.buttonexitA.controlUp(self.button4)
+    self.buttonexitA.controlDown(self.button4)
+    self.button4.controlRight(self.listA)
+    self.button4.controlLeft(self.listA)
+    self.button4.controlUp(self.buttonexitA)
+    self.button4.controlDown(self.buttonexitA)
     self.listA.controlRight(self.buttonexitA)
     self.listA.controlLeft(self.buttonexitA)
     self.setFocus(self.listA)
@@ -168,6 +186,7 @@ class MyClass(xbmcgui.WindowDialog):
       self.close()
 
   def onControl(self, control):
+    global optionsAdd
     if control == self.button0:
       self.execcmd("opkg update")
       tm = self.execcmd("opkg upgrade")
@@ -204,12 +223,14 @@ class MyClass(xbmcgui.WindowDialog):
       dialog = xbmcgui.Dialog()
       if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
         pkg = item.getLabel()
-        tm = self.execcmd('opkg install ' + pkg )
+        tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
         print tm
         self.message('You installed : ' + pkg )
         self.strActionAdd.setVisible(False)
         self.buttonexitA.setVisible(False)
         self.listA.setVisible(False)
+        self.button4.setVisible(False)
+        self.stropt1.setVisible(False)
         self.listA.reset()
         self.basicbutton()
 
@@ -222,7 +243,9 @@ class MyClass(xbmcgui.WindowDialog):
     if control == self.buttonexitA:
       self.strActionAdd.setVisible(False)
       self.buttonexitA.setVisible(False)
+      self.button4.setVisible(False)
       self.listA.setVisible(False)
+      self.stropt1.setVisible(False)
       self.basicbutton()
 
     if control == self.button2:
@@ -230,6 +253,13 @@ class MyClass(xbmcgui.WindowDialog):
       
     if control == self.button3:
       self.close()
+
+    if control == self.button4:
+      k = xbmc.Keyboard()
+      k.doModal()
+      if (k.isConfirmed()):
+        self.button4.setLabel(k.getText())
+        optionsAdd = k.getText()
 
   def message(self, message):
     dialog = xbmcgui.Dialog()
