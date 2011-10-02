@@ -54,10 +54,12 @@ import xbmc, xbmcgui
 
 #get actioncodes from keymap.xml
 ACTION_PREVIOUS_MENU = 10
+ACTION_SELECT_ITEM = 7
 
 class MyClass(xbmcgui.WindowDialog):
   def __init__(self):
     imagelogo = os.path.abspath(os.curdir + '/background.png')
+    itemFocus = os.path.abspath(os.curdir + '/focus.png')
     screenx = self.getWidth()
     screeny = self.getHeight()
     self.addControl(xbmcgui.ControlImage(50,50,screenx-100,screeny-100, imagelogo))
@@ -73,6 +75,42 @@ class MyClass(xbmcgui.WindowDialog):
     self.addControl(self.button2)
     self.button3 = xbmcgui.ControlButton(120, 420, 250, 30, "Exit")
     self.addControl(self.button3)
+    self.strActionRemove = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to remove', 'font18', '0xFFBBFFBB')
+    self.addControl(self.strActionRemove)
+    self.list = xbmcgui.ControlList(380, 150, 300, 400,buttonTexture=itemFocus)
+    self.addControl(self.list)
+    self.buttonexitR = xbmcgui.ControlButton(380, 600, 250, 30, "Exit")
+    self.strActionRemove.setVisible(False)
+    self.buttonexitR.setVisible(False)
+    self.list.setVisible(False)
+
+    self.basicbutton()
+
+    # Not visible at the beginning
+  def ActivatebuttonsR(self):
+    l = self.execcmd("opkg list")
+    for x in range(len(l)):
+      l[x] = l[x].strip()
+      self.list.addItem(l[x])
+    self.strActionRemove.setVisible(True)
+    self.buttonexitR.setVisible(True)
+    self.list.setVisible(True)
+    self.addControl(self.buttonexitR)
+    self.buttonexitR.controlRight(self.list)
+    self.buttonexitR.controlLeft(self.list)
+    self.list.controlRight(self.buttonexitR)
+    self.list.controlLeft(self.buttonexitR)
+    self.setFocus(self.list)
+    self.button0.setVisible(False)
+    self.button1.setVisible(False)
+    self.button2.setVisible(False)
+    self.button3.setVisible(False)
+
+  def basicbutton(self):
+    self.button0.setVisible(True)
+    self.button1.setVisible(True)
+    self.button2.setVisible(True)
+    self.button3.setVisible(True)
     self.setFocus(self.button0)
     self.button0.controlDown(self.button1)
     self.button1.controlDown(self.button2)
@@ -116,56 +154,6 @@ class MyClass(xbmcgui.WindowDialog):
       else:
         self.message("No package in /root/opkg ! Can't continue ..." )
 
-    if control == self.button2:
-      popup = ChildClass()
-      popup .doModal()
-      del popup
-    if control == self.button3:
-      self.close()
-
-  def message(self, message):
-    dialog = xbmcgui.Dialog()
-    dialog.ok(" Info ", message)
-
-class ChildClass(xbmcgui.WindowDialog):
-  def __init__(self):
-    imagelogo = os.path.abspath(os.curdir + '/background.png')
-    screenx = self.getWidth()
-    screeny = self.getHeight()
-    self.addControl(xbmcgui.ControlImage(0,0,screenx,screeny, imagelogo))
-    self.strActionInfo = xbmcgui.ControlLabel(300, 50, 300, 250, '', 'font18', '0xFFBBFFBB')
-    self.addControl(self.strActionInfo)
-    self.strActionInfo.setLabel('Select Package to remove')
-    tm = self.execcmd("opkg list")
-    self.list = xbmcgui.ControlList(200, 150, 300, 400)
-    self.addControl(self.list)
-    for x in range(len(tm)):
-      tm[x] = tm[x].strip()
-      self.list.addItem(tm[x])
-    self.setFocus(self.list)
-    self.buttonexit = xbmcgui.ControlButton(250, 600, 250, 30, "Exit")
-    self.addControl(self.buttonexit)
-    self.buttonexit.controlRight(self.list)
-    self.buttonexit.controlLeft(self.list)
-    self.list.controlRight(self.buttonexit)
-    self.list.controlLeft(self.buttonexit)
-
-  def execcmd(self, cmd):
-    (child_stdin, child_stdout, child_stderr) = os.popen3(cmd)
-    stderr = child_stderr.readlines()
-    stdout = child_stdout.readlines()
-    child_stdin.close()
-    child_stdout.close()
-    child_stderr.close()
-    if stderr ==[]:
-      print " Cmd Ok result is %s" % stdout
-      print len(stdout)
-      return stdout
-    else:
-      print "Error: %s" % stderr
-      return 'error'
-
-  def onControl(self, control):
     if control == self.list:
       item = self.list.getSelectedItem()
       dialog = xbmcgui.Dialog()
@@ -176,13 +164,28 @@ class ChildClass(xbmcgui.WindowDialog):
         tm = self.execcmd('opkg remove ' + pkg3 )
         print tm
         self.message('You removed : ' + pkg )
-        self.close()
-    if control == self.buttonexit:
+        self.strActionRemove.setVisible(False)
+        self.buttonexitR.setVisible(False)
+        self.list.setVisible(False)
+        self.list.reset()
+        self.basicbutton()
+
+    if control == self.buttonexitR:
+      self.strActionRemove.setVisible(False)
+      self.buttonexitR.setVisible(False)
+      self.list.setVisible(False)
+      self.basicbutton()
+
+    if control == self.button2:
+      self.ActivatebuttonsR()
+      
+    if control == self.button3:
       self.close()
 
   def message(self, message):
     dialog = xbmcgui.Dialog()
-    dialog.ok(" My message title", message)
+    dialog.ok(" Info ", message)
+
 
 class ChildClass2(xbmcgui.WindowDialog):
   def __init__(self):
