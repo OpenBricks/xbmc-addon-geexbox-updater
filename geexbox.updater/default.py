@@ -255,7 +255,7 @@ class MyClass(xbmcgui.WindowDialog):
       self.close()
 
     if control == self.button4:
-      k = xbmc.Keyboard()
+      k = xbmc.Keyboard(optionsAdd)
       k.doModal()
       if (k.isConfirmed()):
         self.button4.setLabel(k.getText())
