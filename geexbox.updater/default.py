@@ -161,9 +161,12 @@ class MyClass(xbmcgui.WindowDialog):
         pkg = item.getLabel()
         pkg2 = pkg.split(" ")
         pkg3 = pkg2[0]
-        tm = self.execcmd('opkg remove ' + pkg3 )
-        print tm
-        self.message('You removed : ' + pkg )
+        tm = self.execcmd('opkg remove ' + pkg3 )   
+        if tm[0] == 'Collected errors:\n':
+          print "".join(tm)
+          self.message('You can\'t remove this package !\nSee logs')
+        else:
+          self.message('You removed : ' + pkg )
         self.strActionRemove.setVisible(False)
         self.buttonexitR.setVisible(False)
         self.list.setVisible(False)
