@@ -120,7 +120,7 @@ class MyClass(xbmcgui.WindowDialog):
 
     # Not visible at the beginning
   def ActivatebuttonsR(self):
-    l = self.execcmd("opkg list")
+    l = self.execcmd("opkg list-installed")
     for x in range(len(l)):
       l[x] = l[x].strip()
       self.list.addItem(l[x])
