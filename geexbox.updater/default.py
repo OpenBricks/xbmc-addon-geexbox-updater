@@ -59,9 +59,12 @@ ACTION_SELECT_ITEM = 7
 class MyClass(xbmcgui.WindowDialog):
 
   global optionsAdd
+  global choosenRepo
   optionsAdd = ''
+  choosenRepo = '/root/opkg'
 
   def __init__(self):
+    global choosenRepo
     imagelogo = os.path.abspath(os.curdir + '/background.png')
     itemFocus = os.path.abspath(os.curdir + '/focus.png')
     screenx = self.getWidth()
@@ -81,8 +84,12 @@ class MyClass(xbmcgui.WindowDialog):
     self.addControl(self.button3)
     self.button4 = xbmcgui.ControlButton(160, 200, 100, 30, "Options")
     self.addControl(self.button4)
-    self.stropt1 = xbmcgui.ControlLabel(160, 170, 300, 250, 'Options for opkg', 'font10', '0xFFBBFFBB')
+    self.button5 = xbmcgui.ControlButton(160, 260, 200, 30, choosenRepo)
+    self.addControl(self.button5)
+    self.stropt1 = xbmcgui.ControlLabel(150, 180, 300, 250, 'Options for opkg :', 'font10', '0xFFBBFFBB')
     self.addControl(self.stropt1)
+    self.strFrom = xbmcgui.ControlLabel(150, 240, 300, 250, 'Binary location :', 'font10', '0xFFBBFFBB')
+    self.addControl(self.strFrom)
     self.strActionRemove = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to remove', 'font18', '0xFFBBFFBB')
     self.addControl(self.strActionRemove)
     self.strActionAdd = xbmcgui.ControlLabel(380, 120, 300, 250, 'Select Package to add ...', 'font18', '0xFFBBFFBB')
@@ -91,18 +98,23 @@ class MyClass(xbmcgui.WindowDialog):
     self.addControl(self.list)
     self.listA = xbmcgui.ControlList(380, 150, 400, 400, buttonFocusTexture=itemFocus)
     self.addControl(self.listA)
+    self.listA2 = xbmcgui.ControlList(380, 150, 400, 400, buttonFocusTexture=itemFocus)
+    self.addControl(self.listA2)
     self.buttonexitR = xbmcgui.ControlButton(160, 300, 100, 30, "Exit")
     self.addControl(self.buttonexitR)
-    self.buttonexitA = xbmcgui.ControlButton(160, 300, 100, 30, "Exit")
+    self.buttonexitA = xbmcgui.ControlButton(160, 320, 100, 30, "Exit")
     self.addControl(self.buttonexitA)
     self.strActionRemove.setVisible(False)
     self.buttonexitR.setVisible(False)
     self.list.setVisible(False)
     self.listA.setVisible(False)
+    self.listA2.setVisible(False)
     self.strActionAdd.setVisible(False)
     self.buttonexitA.setVisible(False)
     self.button4.setVisible(False)
+    self.button5.setVisible(False)
     self.stropt1.setVisible(False)
+    self.strFrom.setVisible(False)
 
     self.basicbutton()
 
@@ -126,30 +138,62 @@ class MyClass(xbmcgui.WindowDialog):
     self.button3.setVisible(False)
 
   def ActivatebuttonsA(self):
+    global choosenRepo
+    self.listA.reset()
+    self.listA2.reset()
     l = self.execcmd("find /root/opkg/ -name *.opk")
-    for x in range(len(l)):
-      l[x] = l[x].strip()
-      self.listA.addItem(l[x])
+
+    if not l == 'error' :  
+      if len(l) == 0:
+        self.listA.addItem('No package in /root/opkg')
+      else:
+        for x in range(len(l)):
+          l[x] = l[x].strip()
+          self.listA.addItem(l[x])
+    else:
+      self.listA.addItem('No package in /root/opkg')
+
+    ll = self.execcmd("opkg list")
+    lli = self.execcmd("opkg list-installed")
+    l2 = [ pkg for pkg in ll if pkg not in lli ]
+    if len(l2) == 0:
+      self.listA2.addItem('All packages are installed')
+#    l2 = self.execcmd("opkg list")
+    else:
+      for x in range(len(l2)):
+        l2[x] = l2[x].strip()
+        self.listA2.addItem(l2[x])
+
     self.strActionAdd.setVisible(True)
     self.buttonexitA.setVisible(True)
-    self.listA.setVisible(True)
     self.button4.setVisible(True)
+    self.button5.setVisible(True)
     self.stropt1.setVisible(True)
-    self.buttonexitA.controlRight(self.listA)
-    self.buttonexitA.controlLeft(self.listA)
-    self.buttonexitA.controlUp(self.button4)
-    self.buttonexitA.controlDown(self.button4)
-    self.button4.controlRight(self.listA)
-    self.button4.controlLeft(self.listA)
-    self.button4.controlUp(self.buttonexitA)
-    self.button4.controlDown(self.buttonexitA)
-    self.listA.controlRight(self.buttonexitA)
-    self.listA.controlLeft(self.buttonexitA)
-    self.setFocus(self.listA)
+    self.strFrom.setVisible(True)
     self.button0.setVisible(False)
     self.button1.setVisible(False)
     self.button2.setVisible(False)
     self.button3.setVisible(False)
+    if choosenRepo == '/root/opkg':
+      self.listA2.setVisible(False)
+      self.listA.setVisible(True)
+      self.setFocus(self.listA)
+       # setNavigation(up, down, left, right)
+      self.button4.setNavigation(self.buttonexitA, self.button5, self.listA, self.listA)
+      self.button5.setNavigation(self.button4, self.buttonexitA, self.listA, self.listA)
+      self.buttonexitA.setNavigation(self.button5, self.button4, self.listA, self.listA)
+      self.listA.controlRight(self.buttonexitA)
+      self.listA.controlLeft(self.buttonexitA)
+    else:
+      self.listA.setVisible(False)
+      self.listA2.setVisible(True)
+      self.setFocus(self.listA2)
+       # setNavigation(up, down, left, right)
+      self.button4.setNavigation(self.buttonexitA, self.button5, self.listA2, self.listA2)
+      self.button5.setNavigation(self.button4, self.buttonexitA, self.listA2, self.listA2)
+      self.buttonexitA.setNavigation(self.button5, self.button4, self.listA2, self.listA2)
+      self.listA2.controlRight(self.buttonexitA)
+      self.listA2.controlLeft(self.buttonexitA)
 
   def basicbutton(self):
     self.button0.setVisible(True)
@@ -187,17 +231,14 @@ class MyClass(xbmcgui.WindowDialog):
 
   def onControl(self, control):
     global optionsAdd
+    global choosenRepo
     if control == self.button0:
       self.execcmd("opkg update")
       tm = self.execcmd("opkg upgrade")
       self.message("".join(tm))
 
     if control == self.button1:
-      tm = self.execcmd("find /root/opkg/ -name *.opk")
-      if not tm == 'error' :
-        self.ActivatebuttonsA()
-      else:
-        self.message("No package in /root/opkg ! Can't continue ..." )
+      self.ActivatebuttonsA()
 
     if control == self.list:
       item = self.list.getSelectedItem()
@@ -220,19 +261,43 @@ class MyClass(xbmcgui.WindowDialog):
 
     if control == self.listA:
       item = self.listA.getSelectedItem()
-      dialog = xbmcgui.Dialog()
-      if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
-        pkg = item.getLabel()
-        tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
-        print tm
-        self.message('You installed : ' + pkg )
-        self.strActionAdd.setVisible(False)
-        self.buttonexitA.setVisible(False)
-        self.listA.setVisible(False)
-        self.button4.setVisible(False)
-        self.stropt1.setVisible(False)
-        self.listA.reset()
-        self.basicbutton()
+      if item.getLabel() != 'No package in /root/opkg':
+        dialog = xbmcgui.Dialog()
+        if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
+          pkg = item.getLabel()
+          tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
+          print tm
+          self.message('You installed : ' + pkg )
+          self.strActionAdd.setVisible(False)
+          self.buttonexitA.setVisible(False)
+          self.listA.setVisible(False)
+          self.button4.setVisible(False)
+          self.button5.setVisible(False)
+          self.stropt1.setVisible(False)
+          self.strFrom.setVisible(False)
+          self.listA.reset()
+          self.listA2.reset()
+          self.basicbutton()
+
+    if control == self.listA2:
+      item = self.listA2.getSelectedItem()
+      if item.getLabel() != 'All packages are installed':
+        dialog = xbmcgui.Dialog()
+        if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
+          pkg = item.getLabel()
+          tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
+          print tm
+          self.message('You installed : ' + pkg )
+          self.strActionAdd.setVisible(False)
+          self.buttonexitA.setVisible(False)
+          self.listA2.setVisible(False)
+          self.button4.setVisible(False)
+          self.button5.setVisible(False)
+          self.stropt1.setVisible(False)
+          self.strFrom.setVisible(False)
+          self.listA.reset()
+          self.listA2.reset()
+          self.basicbutton()
 
     if control == self.buttonexitR:
       self.strActionRemove.setVisible(False)
@@ -245,7 +310,9 @@ class MyClass(xbmcgui.WindowDialog):
       self.buttonexitA.setVisible(False)
       self.button4.setVisible(False)
       self.listA.setVisible(False)
+      self.listA2.setVisible(False)
       self.stropt1.setVisible(False)
+      self.strFrom.setVisible(False)
       self.basicbutton()
 
     if control == self.button2:
@@ -260,6 +327,14 @@ class MyClass(xbmcgui.WindowDialog):
       if (k.isConfirmed()):
         self.button4.setLabel(k.getText())
         optionsAdd = k.getText()
+
+    if control == self.button5:
+      if choosenRepo == '/root/opkg':
+        choosenRepo = 'GeeXboX repositorie'
+      else:
+        choosenRepo = '/root/opkg'
+      self.button5.setLabel(choosenRepo)
+      self.ActivatebuttonsA()
 
   def message(self, message):
     dialog = xbmcgui.Dialog()
