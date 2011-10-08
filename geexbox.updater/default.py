@@ -116,6 +116,13 @@ class MyClass(xbmcgui.WindowDialog):
     self.stropt1.setVisible(False)
     self.strFrom.setVisible(False)
 
+    self.textbox = xbmcgui.ControlTextBox(150, 150, 600, 400, 'font13', textColor='0xFFFFFFFF')
+    self.addControl(self.textbox)
+    self.buttontext = xbmcgui.ControlButton(600, 600, 200, 30, 'Close')
+    self.addControl(self.buttontext)
+    self.textbox.setVisible(False)
+    self.buttontext.setVisible(False)
+
     self.basicbutton()
 
     # Not visible at the beginning
@@ -219,7 +226,6 @@ class MyClass(xbmcgui.WindowDialog):
     child_stderr.close()
     if stderr ==[]:
       print " Cmd Ok result is %s" % stdout
-      print len(stdout)
       return stdout
     else:
       print "Error: %s" % stderr
@@ -249,15 +255,24 @@ class MyClass(xbmcgui.WindowDialog):
         pkg3 = pkg2[0]
         tm = self.execcmd('opkg remove ' + pkg3 )   
         if tm[0] == 'Collected errors:\n':
-          print "".join(tm)
-          self.message('You can\'t remove this package !\nSee logs')
+          res=''
+          for x in range(len(tm)):
+            res = res + tm[x]
+          self.message('Sorry, You can\'t remove this package !\nSee logs')
+          print res
+          res = res.replace('print_dependents_warning:','')
+          self.strActionRemove.setVisible(False)
+          self.buttonexitR.setVisible(False)
+          self.list.setVisible(False)
+          self.list.reset()
+          self.seeLogs(res)
         else:
           self.message('You removed : ' + pkg )
-        self.strActionRemove.setVisible(False)
-        self.buttonexitR.setVisible(False)
-        self.list.setVisible(False)
-        self.list.reset()
-        self.basicbutton()
+          self.strActionRemove.setVisible(False)
+          self.buttonexitR.setVisible(False)
+          self.list.setVisible(False)
+          self.list.reset()
+          self.basicbutton()
 
     if control == self.listA:
       item = self.listA.getSelectedItem()
@@ -266,18 +281,37 @@ class MyClass(xbmcgui.WindowDialog):
         if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
           pkg = item.getLabel()
           tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
-          print tm
-          self.message('You installed : ' + pkg )
-          self.strActionAdd.setVisible(False)
-          self.buttonexitA.setVisible(False)
-          self.listA.setVisible(False)
-          self.button4.setVisible(False)
-          self.button5.setVisible(False)
-          self.stropt1.setVisible(False)
-          self.strFrom.setVisible(False)
-          self.listA.reset()
-          self.listA2.reset()
-          self.basicbutton()
+ #         print tm
+          if tm[1] == 'Collected errors:\n':
+            res=''
+            for x in range(len(tm)):
+              res = res + tm[x]
+            self.message('Sorry, You can\'t add this package !\nSee logs')
+            print res
+            res = res.replace('check_data_file_clashes:','')
+            self.strActionAdd.setVisible(False)
+            self.buttonexitA.setVisible(False)
+            self.listA.setVisible(False)
+            self.button4.setVisible(False)
+            self.button5.setVisible(False)
+            self.stropt1.setVisible(False)
+            self.strFrom.setVisible(False)
+            self.listA.reset()
+            self.listA2.reset()
+            self.listA.reset()
+            self.seeLogs(res)
+          else:
+            self.message('You installed : ' + pkg )
+            self.strActionAdd.setVisible(False)
+            self.buttonexitA.setVisible(False)
+            self.listA.setVisible(False)
+            self.button4.setVisible(False)
+            self.button5.setVisible(False)
+            self.stropt1.setVisible(False)
+            self.strFrom.setVisible(False)
+            self.listA.reset()
+            self.listA2.reset()
+            self.basicbutton()
 
     if control == self.listA2:
       item = self.listA2.getSelectedItem()
@@ -286,18 +320,37 @@ class MyClass(xbmcgui.WindowDialog):
         if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
           pkg = item.getLabel()
           tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
-          print tm
-          self.message('You installed : ' + pkg )
-          self.strActionAdd.setVisible(False)
-          self.buttonexitA.setVisible(False)
-          self.listA2.setVisible(False)
-          self.button4.setVisible(False)
-          self.button5.setVisible(False)
-          self.stropt1.setVisible(False)
-          self.strFrom.setVisible(False)
-          self.listA.reset()
-          self.listA2.reset()
-          self.basicbutton()
+#          print tm
+          if tm[1] == 'Collected errors:\n':
+            res=''
+            for x in range(len(tm)):
+              res = res + tm[x]
+            self.message('Sorry, You can\'t add this package !\nSee logs')
+            print res
+            res = res.replace('check_data_file_clashes:','')
+            self.strActionAdd.setVisible(False)
+            self.buttonexitA.setVisible(False)
+            self.listA2.setVisible(False)
+            self.button4.setVisible(False)
+            self.button5.setVisible(False)
+            self.stropt1.setVisible(False)
+            self.strFrom.setVisible(False)
+            self.listA.reset()
+            self.listA2.reset()
+            self.listA.reset()
+            self.seeLogs(res)
+          else:
+            self.message('You installed : ' + pkg )
+            self.strActionAdd.setVisible(False)
+            self.buttonexitA.setVisible(False)
+            self.listA2.setVisible(False)
+            self.button4.setVisible(False)
+            self.button5.setVisible(False)
+            self.stropt1.setVisible(False)
+            self.strFrom.setVisible(False)
+            self.listA.reset()
+            self.listA2.reset()
+            self.basicbutton()
 
     if control == self.buttonexitR:
       self.strActionRemove.setVisible(False)
@@ -336,9 +389,22 @@ class MyClass(xbmcgui.WindowDialog):
       self.button5.setLabel(choosenRepo)
       self.ActivatebuttonsA()
 
+    if control == self.buttontext:
+       self.textbox.setVisible(False)
+       self.buttontext.setVisible(False)
+       self.textbox.reset()
+       self.basicbutton()
+
   def message(self, message):
     dialog = xbmcgui.Dialog()
     dialog.ok(" Info ", message)
+
+  def seeLogs(self, txt):
+    self.textbox.setText(txt)
+    self.textbox.setVisible(True)
+    self.buttontext.setVisible(True)
+    self.setFocus(self.buttontext)
+    
 
 mydisplay = MyClass()
 mydisplay .doModal()
