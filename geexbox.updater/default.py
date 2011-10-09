@@ -67,9 +67,11 @@ class MyClass(xbmcgui.WindowDialog):
     global choosenRepo
     imagelogo = os.path.abspath(os.curdir + '/background.png')
     itemFocus = os.path.abspath(os.curdir + '/focus.png')
+    imagewait = os.path.abspath(os.curdir + '/wait.gif')
     screenx = self.getWidth()
     screeny = self.getHeight()
     self.addControl(xbmcgui.ControlImage(50,50,screenx-100,screeny-100, imagelogo))
+    self.waitimg = xbmcgui.ControlImage(screenx/2-100 ,screeny/2-100,200,200, imagewait)
     self.strActionInfo = xbmcgui.ControlLabel(300, 50, 500, 200, '', 'font24_title', '0xFFFF000F')
     self.addControl(self.strActionInfo)
     self.strActionInfo.setLabel('GeeXboX packages')
@@ -239,9 +241,11 @@ class MyClass(xbmcgui.WindowDialog):
     global optionsAdd
     global choosenRepo
     if control == self.button0:
+      self.addControl(self.waitimg)
       self.execcmd("opkg update")
       tm = self.execcmd("opkg upgrade")
-      self.message("".join(tm))
+      self.removeControl(self.waitimg)
+      self.message('Done')
 
     if control == self.button1:
       self.ActivatebuttonsA()
@@ -253,7 +257,9 @@ class MyClass(xbmcgui.WindowDialog):
         pkg = item.getLabel()
         pkg2 = pkg.split(" ")
         pkg3 = pkg2[0]
-        tm = self.execcmd('opkg remove ' + pkg3 )   
+        self.addControl(self.waitimg)
+        tm = self.execcmd('opkg remove ' + pkg3 )
+        self.removeControl(self.waitimg)
         if tm[0] == 'Collected errors:\n':
           res=''
           for x in range(len(tm)):
@@ -280,7 +286,9 @@ class MyClass(xbmcgui.WindowDialog):
         dialog = xbmcgui.Dialog()
         if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
           pkg = item.getLabel()
+          self.addControl(self.waitimg)
           tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
+          self.removeControl(self.waitimg)
  #         print tm
           if tm[1] == 'Collected errors:\n':
             res=''
@@ -319,7 +327,9 @@ class MyClass(xbmcgui.WindowDialog):
         dialog = xbmcgui.Dialog()
         if dialog.yesno("Warning ...", 'Do you really want to Install '+ item.getLabel() + ' ?' ):
           pkg = item.getLabel()
+          self.addControl(self.waitimg)
           tm = self.execcmd('opkg install ' + optionsAdd + ' ' + pkg )
+          self.removeControl(self.waitimg)
 #          print tm
           if tm[1] == 'Collected errors:\n':
             res=''
