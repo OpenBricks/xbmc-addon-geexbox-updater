@@ -372,6 +372,7 @@ class MyClass(xbmcgui.WindowDialog):
       self.strActionAdd.setVisible(False)
       self.buttonexitA.setVisible(False)
       self.button4.setVisible(False)
+      self.button5.setVisible(False)
       self.listA.setVisible(False)
       self.listA2.setVisible(False)
       self.stropt1.setVisible(False)
