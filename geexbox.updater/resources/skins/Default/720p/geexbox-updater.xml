@@ -46,7 +46,7 @@
 		<width>350</width>
 		<height>45</height>
 		<font>font24_title</font>
-		<textcolor>FFFF000F</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 		<align>left</align>
 		<aligny>center</aligny>
 		<wrapmultiline>true</wrapmultiline>
