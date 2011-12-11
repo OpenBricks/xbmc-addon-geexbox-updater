@@ -19,7 +19,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
       self.controlId = 0
       self.A = 0
       self.R = 0
-      self.choosenrepo = '/root/opkg'
+      self.choosenrepo = 'GeeXboX repositorie'
       self.OptionsAdd = ''
 
 
@@ -70,9 +70,22 @@ class GUI( xbmcgui.WindowXMLDialog ):
         else:
           self.listA.addItem('No package in /root/opkg')
       else:
-        ll = self.execcmd("opkg list")
+        ll = self.execcmd("opkg list | grep -v '  ' | grep -v 'dbg'")
+        if len(ll) != 0:
+          lstrip = []
+          for x in range(len(ll)):
+            a = ll[x]
+            b = a.split(" ")
+            c = b[0]
+            lstrip.append(c)
         lli = self.execcmd("opkg list-installed")
-        l = [ pkg for pkg in ll if pkg not in lli ]
+        lstrip2 = []
+        for x in range(len(lli)):
+          a = lli[x]
+          b = a.split(" ")
+          c = b[0]
+          lstrip2.append(c)
+        l = [ pkg for pkg in lstrip if pkg not in lstrip2 ]
         if len(l) == 0:
           self.listA.addItem('All packages are installed')
         else:
@@ -128,7 +141,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
        self.cleanUi()
        self.buttonOp = xbmcgui.ControlButton(650, 150, 225, 50, "Options")
        self.addControl(self.buttonOp)
-       print self.buttonOp.getId()
+#       print self.buttonOp.getId()
        self.buttonRepo = xbmcgui.ControlButton(650, 250, 225, 50, self.choosenrepo)
        self.addControl(self.buttonRepo)
        self.strOp = xbmcgui.ControlLabel(660, 130, 150, 20, 'Options for opkg :', 'font10', '0xFFBBFFBB')
