@@ -266,7 +266,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 ##--------  Log  ------------##
        
     def log(self, msg):
-      xbmc.output("##### [%s] - Debug msg: %s" % (__scriptname__,msg,),level=xbmc.LOGDEBUG )        
+      xbmc.log("##### [%s] - Debug msg: %s" % (__scriptname__,msg,),level=xbmc.LOGDEBUG )        
         
 ##--------- End Script ------##
     
