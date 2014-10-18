@@ -70,7 +70,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
         else:
           self.listA.addItem('No package in /root/opkg')
       else:
-        ll = self.execcmd("opkg list | grep -v '  ' | grep -v 'dbg'")
+        ll = self.execcmd("opkg list | grep -v '^ ' | grep -v '\-dbg'")
         if len(ll) != 0:
           lstrip = []
           for x in range(len(ll)):
