@@ -212,7 +212,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
      try:
        if (controlId == self.buttonRepo.getId()):
          if self.choosenrepo == '/root/opkg':
-           self.choosenrepo = 'GeeXboX repositorie'
+           self.choosenrepo = 'GeeXboX repository'
          else:
            self.choosenrepo = '/root/opkg'
          self.buttonRepo.setLabel(self.choosenrepo)
