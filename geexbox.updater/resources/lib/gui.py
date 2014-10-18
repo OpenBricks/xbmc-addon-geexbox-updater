@@ -19,7 +19,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
       self.controlId = 0
       self.A = 0
       self.R = 0
-      self.choosenrepo = 'GeeXboX repositorie'
+      self.choosenrepo = 'GeeXboX repository'
       self.OptionsAdd = ''
 
 
